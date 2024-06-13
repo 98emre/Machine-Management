@@ -1,4 +1,5 @@
 using Machine_Management.Frontend.Components;
+using MachineManagement.Frontend.Models;
 
 namespace Machine_Management.Frontend
 {
@@ -11,6 +12,8 @@ namespace Machine_Management.Frontend
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            builder.Services.AddSingleton<DeviceClient>();
 
             var app = builder.Build();
 
