@@ -10,11 +10,10 @@
     <NavLink class="btn btn-primary" href="/editDevice">New Device</NavLink>
 </div>
 
-@if(devices is null)
+@if (devices is null)
 {
     <p><em>Loading...</em></p>
 }
-
 else
 {
     <div class="container mt-3">
@@ -38,7 +37,7 @@ else
                     </thead>
 
                     <tbody>
-                        @foreach(var device in devices)
+                        @foreach (var device in devices)
                         {
                             <tr>
                                 <td></td>
@@ -51,22 +50,23 @@ else
                                         <a class="btn btn-primary me-2" role="button" href="@DeviceUrl(device.Id)">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                    </div>
 
+                                        <button class="btn btn-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="@GetDeleteModalId(device)">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                        <DeleteDevice Device="@device" />
+                                    </div>
                                 </td>
                             </tr>
                         }
-
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-    
 }
-
-
-
 
 @code {
     private Device[]? devices;
@@ -77,4 +77,9 @@ else
     }
 
     private static string DeviceUrl(int id) => $"/editdevice/{id}";
+
+    private string GetDeleteModalId(Device device)
+    {
+        return $"#{DeleteDevice.GetModalId(device)}";
+    }
 }

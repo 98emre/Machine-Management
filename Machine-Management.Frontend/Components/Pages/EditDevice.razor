@@ -10,11 +10,15 @@
 
 <h3>Edit Device</h3>
 
-@if (device is null)
+@if (loading)
 {
     <p><em>Loading...</em></p>
 }
 
+else if (deviceNotFound)
+{
+    <p><em>Not found</em></p>
+}
 
 else
 {
@@ -43,7 +47,7 @@ else
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save</button>
-                <a href="/" role="button" class="btn btn-secondary">Cancel</a>
+                <a href="/dashboard" role="button" class="btn btn-secondary">Cancel</a>
             </EditForm>
         </div>
     </div>
@@ -51,6 +55,8 @@ else
 }
 
 @code {
+    private bool deviceNotFound = false;
+    private bool loading = true;
 
     [SupplyParameterFromForm]
     private Device? device { get; set; }
@@ -67,7 +73,15 @@ else
 
         if(Id is not null)
         {
-            device = Client.GetDevice(Id.Value);
+            try
+            {
+                device = Client.GetDevice(Id.Value);
+            }
+
+            catch (ArgumentNullException)
+            {
+                deviceNotFound = true;
+            }
         }
 
         else
@@ -78,6 +92,8 @@ else
                 Date = DateOnly.FromDateTime(DateTime.UtcNow),
             };
         }
+
+        loading = false;
     }
 
     private void HandleSubmit()

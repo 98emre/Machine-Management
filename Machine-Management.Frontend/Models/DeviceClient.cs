@@ -48,7 +48,7 @@
 
         public void RemoveDevice(int id) 
         {
-            var device = devices.Find(d => d.Id == id);
+            Device device = devices.Find(d => d.Id == id);
             ArgumentNullException.ThrowIfNull(device);
             devices.Remove(device);
         }
