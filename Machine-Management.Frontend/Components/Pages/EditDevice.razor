@@ -1,4 +1,6 @@
 ﻿@page "/editDevice"
+@page "/editDevice/{id:int}"
+
 @inject NavigationManager NavigationManager
 @inject DeviceClient Client
 @rendermode InteractiveServer
@@ -53,20 +55,45 @@ else
     [SupplyParameterFromForm]
     private Device? device { get; set; }
 
-    protected override void OnInitialized()
+    [Parameter]
+    public int? Id { get; set; }
+
+    protected override void OnParametersSet()
     {
-        device = new Device()
+        if(device is not null)
         {
-            Name = string.Empty,
-            Date = DateOnly.FromDateTime(DateTime.UtcNow),
-            Datas = []
-        };
+            return;
+        }
+
+        if(Id is not null)
+        {
+            device = Client.GetDevice(Id.Value);
+        }
+
+        else
+        {
+            device = new Device()
+            {
+                Name = string.Empty,
+                Date = DateOnly.FromDateTime(DateTime.UtcNow),
+            };
+        }
     }
 
     private void HandleSubmit()
     {
         ArgumentNullException.ThrowIfNull(device);
-        Client.AddDevice(device);
+
+        if(Id is null)
+        {
+            Client.AddDevice(device);
+        }
+
+        else
+        {
+            device.Id = Id.Value;
+            Client.UpdateDevice(device);
+        }
 
         NavigationManager.NavigateTo("/dashboard");
     }
