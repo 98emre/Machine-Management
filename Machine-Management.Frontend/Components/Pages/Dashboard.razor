@@ -46,7 +46,14 @@ else
                                 <td>@device.Name</td>
                                 <td>@device.Date</td>
                                 <td>@device.Status</td>
-                                <td></td>
+                                <td>
+                                    <div class="d-flex">
+                                        <a class="btn btn-primary me-2" role="button" href="@DeviceUrl(device.Id)">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+
+                                </td>
                             </tr>
                         }
 
@@ -69,4 +76,5 @@ else
         devices = Client.Devices();
     }
 
+    private static string DeviceUrl(int id) => $"/editdevice/{id}";
 }
