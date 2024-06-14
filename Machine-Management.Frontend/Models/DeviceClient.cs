@@ -11,7 +11,6 @@
                 Name = "Ice machine",
                 Status = true,
                 Date = new DateOnly(2022, 10, 2),
-                Datas = []
             },
 
             new()
@@ -20,7 +19,6 @@
                 Name = "Black jack machine",
                 Status = false,
                 Date = new DateOnly(2000, 2, 2),
-                Datas = []
             },
 
             new()
@@ -29,12 +27,41 @@
                 Name = "Slot Machine",
                 Status = true,
                 Date = new DateOnly(2012, 4, 12),
-                Datas = []
             }
 
         ];
 
         public Device[] Devices() => [.. devices];
+
+        public void AddDevice(Device addDevice) 
+        {
+            var device = new Device
+            {
+                Id = devices.Count + 1,
+                Name = addDevice.Name,
+                Status = addDevice.Status,
+                Date = addDevice.Date,
+            };
+
+            devices.Add(device);
+        }
+
+        public void RemoveDevice(int id) 
+        {
+            var device = devices.Find(d => d.Id == id);
+            ArgumentNullException.ThrowIfNull(device);
+            devices.Remove(device);
+        }
+
+        public void UpdateDevice(Device device)
+        {
+            var existingDevice = devices.Find(d => d.Id ==  device.Id);
+            ArgumentNullException.ThrowIfNull(existingDevice);
+
+            existingDevice.Status = device.Status;
+            existingDevice.Name = device.Name;
+            existingDevice.Date = device.Date;
+        }
 
     }
 }

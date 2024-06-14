@@ -1,12 +1,13 @@
 ﻿@page "/dashboard"
 @inject DeviceClient Client
+@rendermode InteractiveServer
 
 <PageTitle>Dashboard</PageTitle>
 
 <h3>Dashboard</h3>
 
 <div class="mt-2">
-    <button class="btn btn-primary">New Device</button>
+    <NavLink class="btn btn-primary" href="/editDevice">New Device</NavLink>
 </div>
 
 @if(devices is null)

@@ -9,8 +9,5 @@
         public bool Status { get; set; }
 
         public required DateOnly Date { get; set; }
-
-        public List<Data> Datas { get; set; } = new List<Data>();
-
     }
 }
