@@ -63,5 +63,13 @@
             existingDevice.Date = device.Date;
         }
 
+        public Device GetDevice(int id)
+        {
+            var existingDevice = devices.Find(d => d.Id == id);
+            ArgumentNullException.ThrowIfNull(existingDevice);
+
+            return existingDevice;
+        }
+
     }
 }
