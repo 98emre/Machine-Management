@@ -1,4 +1,6 @@
-﻿namespace MachineManagement.Frontend.Models
+﻿using System.Collections;
+
+namespace MachineManagement.Frontend.Models
 {
     public class Device
     {
@@ -9,5 +11,7 @@
         public bool Status { get; set; }
 
         public required DateOnly Date { get; set; }
+
+        public List<Item> Items { get; set; } = new List<Item>();
     }
 }
