@@ -77,14 +77,18 @@ namespace MachineManagement.Frontend.Models
 
         public void AddItem(int id, Item item)
         {
+            var device = devices.Find(d => d.Id == id);
+
+            ArgumentNullException.ThrowIfNull(device);
+
             var addItem = new Item
             {
-                Id = devices[id].Items.Count() + 1,
+                Id = device.Items.Count() + 1,
                 Name = item.Name,
                 Price = item.Price,
             };
 
-            devices[id].Items.Add(addItem);
+            device.Items.Add(addItem);
         }
 
     }

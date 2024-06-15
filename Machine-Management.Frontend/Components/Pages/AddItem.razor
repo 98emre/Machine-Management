@@ -1,0 +1,73 @@
+﻿@page "/details/{Id:int}/addItem"
+
+@inject NavigationManager NavigationManager
+@inject DeviceClient Client
+@rendermode InteractiveServer
+
+
+<PageTitle>Add Item </PageTitle>
+
+
+@if (loading)
+{
+    <p><em>Loading...</em></p>
+}
+
+else
+{
+    <h3 class="mt-3">Add Item</h3>
+
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm Model="@item" FormName="editDevice" OnValidSubmit="HandleSubmit">
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name: </label>
+                    <InputText id="name" @bind-Value="item.Name" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price: </label>
+                    <InputNumber id="price" @bind-Value="item.Price" class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add</button>
+                <a href="@ReturnUrl(Id)" role="button" class="btn btn-secondary">Cancel</a>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+
+    private bool loading = true;
+    private Item item = new Item();
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private static string ReturnUrl(int id) => $"/details/{id}";
+
+    protected override void OnParametersSet()
+    {
+        if (Id == 0)
+        {
+            return;
+        }
+
+        item = new Item
+        {
+             Name = string.Empty,
+             Price = 0.0
+        };
+
+        loading = false;
+    }
+
+    private void HandleSubmit()
+    {
+        Client.AddItem(Id, item);
+        NavigationManager.NavigateTo($"/details/{Id}");
+    }
+
+}
