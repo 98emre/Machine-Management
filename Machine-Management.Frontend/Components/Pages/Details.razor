@@ -62,7 +62,18 @@ else
                             <th scope="row">@item.Id</th>
                             <td>@item.Name</td>
                             <td>@item.Price</td>
-                            <th></th>
+                            <th>
+                                <div class="d-flex">
+
+                                    <button class="btn btn-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="@GetDeleteModalId(item)">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                    <DeleteItem Device="@device" Item="@item"  />
+                                </div>
+
+                            </th>
                         </tr>
                     }
                 </tbody>
@@ -82,6 +93,12 @@ else
     public Device? device { get; set; }
 
     private static string AddItemUrl(int id) => $"/details/{id}/addItem";
+
+
+    private string GetDeleteModalId(Item item)
+    {
+        return $"#{DeleteItem.GetModalId(item)}";
+    }
 
     protected override void OnParametersSet()
     {
