@@ -1,4 +1,6 @@
-﻿namespace MachineManagement.Frontend.Models
+﻿using System.Xml.Linq;
+
+namespace MachineManagement.Frontend.Models
 {
     public class DeviceClient
     {
@@ -11,6 +13,7 @@
                 Name = "Ice machine",
                 Status = true,
                 Date = new DateOnly(2022, 10, 2),
+                Items = []
             },
 
             new()
@@ -19,6 +22,7 @@
                 Name = "Black jack machine",
                 Status = false,
                 Date = new DateOnly(2000, 2, 2),
+                Items = []
             },
 
             new()
@@ -27,8 +31,8 @@
                 Name = "Slot Machine",
                 Status = true,
                 Date = new DateOnly(2012, 4, 12),
+                Items = []
             }
-
         ];
 
         public Device[] Devices() => [.. devices];
@@ -48,7 +52,7 @@
 
         public void RemoveDevice(int id) 
         {
-            Device device = devices.Find(d => d.Id == id);
+            Device? device = devices.Find(d => d.Id == id);
             ArgumentNullException.ThrowIfNull(device);
             devices.Remove(device);
         }
@@ -69,6 +73,18 @@
             ArgumentNullException.ThrowIfNull(existingDevice);
 
             return existingDevice;
+        }
+
+        public void AddItem(int id, Item item)
+        {
+            var addItem = new Item
+            {
+                Id = devices[id].Items.Count() + 1,
+                Name = item.Name,
+                Price = item.Price,
+            };
+
+            devices[id].Items.Add(addItem);
         }
 
     }
