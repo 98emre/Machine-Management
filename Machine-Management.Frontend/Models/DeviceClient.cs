@@ -103,12 +103,12 @@ namespace MachineManagement.Frontend.Models
             device.Items.Remove(item);
         }
 
-        public void UpdateItem(int deviceId, int itemId, Item updateItem)
+        public void UpdateItem(int deviceId, Item updateItem)
         {
             var device = devices.FirstOrDefault(d => d.Id == deviceId);
             ArgumentNullException.ThrowIfNull(device);
 
-            var item = device.Items.FirstOrDefault(i => i.Id == itemId);
+            var item = device.Items.FirstOrDefault(i => i.Id == updateItem.Id);
             ArgumentNullException.ThrowIfNull(item);
 
             item.Name = updateItem.Name;
