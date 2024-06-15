@@ -29,7 +29,10 @@ else
                 <label for="date" class="form-label"><strong>Date: </strong> @device.Date.ToShortDateString() </label>
             </div>
 
-           
+           <div class="d-flex">
+                <a href="/editdevice/@device.Id" role="button" class="btn btn-primary">Edit</a>
+                <a href="/dashboard" role="button" class="btn btn-secondary">Return back</a>
+           </div>
         </div>
     </div>
 
