@@ -91,5 +91,28 @@ namespace MachineManagement.Frontend.Models
             device.Items.Add(addItem);
         }
 
+        public void RemoveItem(int deviceId, int itemId)
+        {
+            var device = devices.FirstOrDefault(d => d.Id == deviceId);
+
+            ArgumentNullException.ThrowIfNull(device);
+
+            var item = device.Items.FirstOrDefault(i =>  i.Id == itemId);
+            ArgumentNullException.ThrowIfNull(item);
+
+            device.Items.Remove(item);
+        }
+
+        public void UpdateItem(int deviceId, int itemId, Item updateItem)
+        {
+            var device = devices.FirstOrDefault(d => d.Id == deviceId);
+            ArgumentNullException.ThrowIfNull(device);
+
+            var item = device.Items.FirstOrDefault(i => i.Id == itemId);
+            ArgumentNullException.ThrowIfNull(item);
+
+            item.Name = updateItem.Name;
+            item.Price = updateItem.Price;
+        }
     }
 }
