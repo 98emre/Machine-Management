@@ -114,5 +114,13 @@ namespace MachineManagement.Frontend.Models
             item.Name = updateItem.Name;
             item.Price = updateItem.Price;
         }
+ 
+        public Item GetItem(Device device, int id) 
+        {
+            var existingItem = device.Items.Find(d => d.Id == id);
+            ArgumentNullException.ThrowIfNull(existingItem);
+            
+            return existingItem;
+        }
     }
 }
