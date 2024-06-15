@@ -65,6 +65,10 @@ else
                             <th>
                                 <div class="d-flex">
 
+                                    <a class="btn btn-primary me-2" role="button" href="@EditItemUrl(device.Id,item.Id)">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
                                     <button class="btn btn-danger"
                                             data-bs-toggle="modal"
                                             data-bs-target="@GetDeleteModalId(item)">
@@ -93,6 +97,7 @@ else
     public Device? device { get; set; }
 
     private static string AddItemUrl(int id) => $"/details/{id}/addItem";
+    private static string EditItemUrl(int id, int itemId) => $"/details/{id}/addItem/{itemId}";
 
 
     private string GetDeleteModalId(Item item)
