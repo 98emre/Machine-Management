@@ -47,8 +47,12 @@ else
                                 <td>@device.Status</td>
                                 <td>
                                     <div class="d-flex">
-                                        <a class="btn btn-primary me-2" role="button" href="@DeviceUrl(device.Id)">
+                                        <a class="btn btn-primary me-2" role="button" href="@EditDeviceUrl(device.Id)">
                                             <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <a class="btn btn-secondary me-2" role="button" href="@DetailsDeviceUrl(device.Id)">
+                                            <i class="bi bi-card-list"></i>
                                         </a>
 
                                         <button class="btn btn-danger"
@@ -76,7 +80,10 @@ else
         devices = Client.Devices();
     }
 
-    private static string DeviceUrl(int id) => $"/editdevice/{id}";
+    private static string EditDeviceUrl(int id) => $"/editdevice/{id}";
+
+    private static string DetailsDeviceUrl(int id) => $"/details/{id}";
+
 
     private string GetDeleteModalId(Device device)
     {
