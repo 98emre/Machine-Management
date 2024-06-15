@@ -96,8 +96,8 @@ else
 
     public Device? device { get; set; }
 
-    private static string AddItemUrl(int id) => $"/details/{id}/addItem";
-    private static string EditItemUrl(int id, int itemId) => $"/details/{id}/addItem/{itemId}";
+    private static string AddItemUrl(int id) => $"/details/{id}/editItem";
+    private static string EditItemUrl(int id, int itemId) => $"/details/{id}/editItem/{itemId}";
 
 
     private string GetDeleteModalId(Item item)
