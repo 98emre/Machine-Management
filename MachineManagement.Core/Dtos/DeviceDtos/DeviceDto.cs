@@ -1,4 +1,5 @@
-﻿using MachineManagement.Core.Entities;
+﻿using MachineManagement.Core.Dtos.ItemDtos;
+using MachineManagement.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,6 @@ namespace MachineManagement.Core.Dtos.Device
 
         public DateOnly Date { get; set; }
 
-        public ICollection<Item> Items { get; set; } = new List<Item>();
+        public ICollection<ItemWithIdDto> Items { get; set; } = new List<ItemWithIdDto>();
     }
 }
