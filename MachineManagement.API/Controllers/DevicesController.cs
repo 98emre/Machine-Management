@@ -1,66 +1,80 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MachineManagement.Data.Data;
 using MachineManagement.Core.Entities;
+using MachineManagement.Core.Repositories;
+using AutoMapper;
+using MachineManagement.Core.Dtos.Device;
 
 namespace MachineManagement.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/devices")]
     [ApiController]
     public class DevicesController : ControllerBase
     {
-        private readonly MachineManagementAPIContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public DevicesController(MachineManagementAPIContext context)
+        public DevicesController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        // GET: api/Devices
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Device>>> GetDevice()
+        public async Task<IActionResult> GetDevice()
         {
-            return await _context.Device.ToListAsync();
+            var devices = await _unitOfWork.DeviceRepository.GetAllAsync();
+
+            if(!devices.Any() ||  devices == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<IEnumerable<DeviceWithoutItemDto>>(devices));
         }
 
-        // GET: api/Devices/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Device>> GetDevice(int id)
+        public async Task<IActionResult> GetDevice(int id)
         {
-            var device = await _context.Device.FindAsync(id);
+            if(id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var device = await _unitOfWork.DeviceRepository.GetAsync(id);
 
             if (device == null)
             {
                 return NotFound();
             }
 
-            return device;
+            return Ok(_mapper.Map<DeviceWithoutItemDto>(device));
         }
 
-        // PUT: api/Devices/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDevice(int id, Device device)
+        public async Task<IActionResult> PutDevice(int id, DevicePostDto devicePostDto)
         {
-            if (id != device.Id)
+            if(id <= 0)
             {
                 return BadRequest();
             }
 
-            _context.Entry(device).State = EntityState.Modified;
+            if (! await DeviceExists(id))
+            {
+                return BadRequest($"Device with Id {id} not found");
+            }
+
+            var device = _mapper.Map<Device>(devicePostDto);
+            device.Id = id;
 
             try
             {
-                await _context.SaveChangesAsync();
+                _unitOfWork.DeviceRepository.Update(device);
+                await _unitOfWork.CompleteAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!DeviceExists(id))
+                if (!await DeviceExists(id))
                 {
                     return NotFound();
                 }
@@ -73,36 +87,56 @@ namespace MachineManagement.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Devices
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Device>> PostDevice(Device device)
+        public async Task<ActionResult<DevicePostDto>> PostDevice(DevicePostDto devicePostDto)
         {
-            _context.Device.Add(device);
-            await _context.SaveChangesAsync();
+            var device = _mapper.Map<Device>(devicePostDto);
 
-            return CreatedAtAction("GetDevice", new { id = device.Id }, device);
+            try
+            {
+                _unitOfWork.DeviceRepository.Add(device);
+                await _unitOfWork.CompleteAsync();
+            }
+
+            catch(Exception){
+                return StatusCode(500, "An error occured while posting the device");
+            }
+
+            var returnDevice = _mapper.Map<DeviceDto>(device);
+
+            return CreatedAtAction("GetDevice", new { id = returnDevice.Id }, returnDevice);
         }
 
-        // DELETE: api/Devices/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDevice(int id)
         {
-            var device = await _context.Device.FindAsync(id);
+            if(id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var device = await _unitOfWork.DeviceRepository.GetAsync(id);
+
             if (device == null)
             {
                 return NotFound();
             }
 
-            _context.Device.Remove(device);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _unitOfWork.DeviceRepository.Remove(device);
+                await _unitOfWork.CompleteAsync();
+            }
+
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occured whilte deleting the game.");
+            }
 
             return NoContent();
         }
 
-        private bool DeviceExists(int id)
-        {
-            return _context.Device.Any(e => e.Id == id);
-        }
+        private async Task<bool> DeviceExists(int id) => await _unitOfWork.DeviceRepository.AnyAsync(id);
+
     }
 }

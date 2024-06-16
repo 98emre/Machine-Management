@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MachineManagement.Data.Repositories
 {
-    public class UnitOfWork : IUnitWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly MachineManagementAPIContext _context;
 

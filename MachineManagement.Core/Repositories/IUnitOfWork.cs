@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MachineManagement.Core.Repositories
 {
-    public interface IUnitWork
+    public interface IUnitOfWork
     {
         IDeviceRepository DeviceRepository { get; }
         IItemRepository ItemRepository { get; }

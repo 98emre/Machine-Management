@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using MachineManagement.Data.Data;
 using MachineManagement.API.Extensions;
+using MachineManagement.Core.Repositories;
+using MachineManagement.Data.Repositories;
 
 namespace MachineManagement.API
 {
@@ -16,6 +18,7 @@ namespace MachineManagement.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("MachineManagementAPIContext") ?? throw new InvalidOperationException("Connection string 'MachineManagementAPIContext' not found.")));
 
             builder.Services.AddAutoMapper(typeof(DeviceMappings));
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
                 .AddNewtonsoftJson()
