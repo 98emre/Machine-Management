@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace MachineManagement.Core.Repositories
 {
-    public interface IDeviceRepository
+    public interface IItemRepository
     {
-        Task<IEnumerable<Device>> GetAllAsync();
-        Task<Device> GetAsync(int id);
+        Task<IEnumerable<Item>> GetAllAsync();
+        Task<Item> GetAsync(int id);
         Task<bool> AnyAsync(int id);
-        void Add(Device device);
-        void Update(Device device);
-        void Remove(Device device);
+        void Add(Item item);
+        void Update(Item item);
+        void Remove(Item item);
     }
 }
