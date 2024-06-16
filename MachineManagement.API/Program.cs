@@ -10,12 +10,17 @@ namespace MachineManagement.API
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add services to the container.
             builder.Services.AddDbContext<MachineManagementAPIContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("MachineManagementAPIContext") ?? throw new InvalidOperationException("Connection string 'MachineManagementAPIContext' not found.")));
 
-            // Add services to the container.
+            builder.Services.AddAutoMapper(typeof(DeviceMappings));
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
+                .AddNewtonsoftJson()
+                .AddXmlDataContractSerializerFormatters();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
