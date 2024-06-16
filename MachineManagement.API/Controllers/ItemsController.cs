@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MachineManagement.API.Data;
+using MachineManagement.Data;
 using MachineManagement.Core.Entities;
 
 namespace MachineManagement.API.Controllers
