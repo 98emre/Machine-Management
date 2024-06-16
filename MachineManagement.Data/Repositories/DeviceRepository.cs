@@ -16,7 +16,7 @@ namespace MachineManagement.Data.Repositories
 
         public DeviceRepository(MachineManagementAPIContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public void Add(Device device) => _context.Add(device);
@@ -29,6 +29,6 @@ namespace MachineManagement.Data.Repositories
 
         public void Remove(Device device) => _context.Device.Remove(device);
 
-        public void Update(Device device) => _context.Device.Remove(device);
+        public void Update(Device device) => _context.Device.Update(device);
     }
 }
