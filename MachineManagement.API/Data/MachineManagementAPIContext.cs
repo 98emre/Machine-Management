@@ -15,5 +15,6 @@ namespace MachineManagement.API.Data
         }
 
         public DbSet<MachineManagement.Core.Entities.Device> Device { get; set; } = default!;
+        public DbSet<MachineManagement.Core.Entities.Item> Item { get; set; } = default!;
     }
 }
