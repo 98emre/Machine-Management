@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachineManagement.Core", "M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachineManagement.Data", "MachineManagement.Data\MachineManagement.Data.csproj", "{8F8E198B-B061-4ECE-85EF-F05486F686B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachineManagement.API", "MachineManagement.API\MachineManagement.API.csproj", "{D0171062-EE10-4A87-8DAD-06AA196E11AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{8F8E198B-B061-4ECE-85EF-F05486F686B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F8E198B-B061-4ECE-85EF-F05486F686B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F8E198B-B061-4ECE-85EF-F05486F686B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0171062-EE10-4A87-8DAD-06AA196E11AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0171062-EE10-4A87-8DAD-06AA196E11AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0171062-EE10-4A87-8DAD-06AA196E11AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0171062-EE10-4A87-8DAD-06AA196E11AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

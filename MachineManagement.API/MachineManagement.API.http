@@ -1,0 +1,6 @@
+@MachineManagement.API_HostAddress = http://localhost:5097
+
+GET {{MachineManagement.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
