@@ -12,10 +12,10 @@ namespace MachineManagement.Data.Data
     public class SeedData
     {
         private static Faker faker;
-
+        
         public static async Task InitAsync(MachineManagementAPIContext context)
         {
-            if(! await context.Device.AnyAsync())
+            if (!await context.Device.AnyAsync())
             {
                 faker = new Faker();
 
@@ -33,7 +33,7 @@ namespace MachineManagement.Data.Data
         {
             var devices = new List<Device>();
 
-            for(int i = 0; i<count; i++)
+            for (int i = 0; i < count; i++)
             {
                 var device = new Device
                 {
@@ -48,13 +48,13 @@ namespace MachineManagement.Data.Data
             return devices;
         }
 
-        private static IEnumerable<Item> GenerateItems(IEnumerable<Device> devices, int nrOfItems) 
+        private static IEnumerable<Item> GenerateItems(IEnumerable<Device> devices, int nrOfItems)
         {
             var items = new List<Item>();
 
             foreach (var device in devices)
             {
-                for(int i = 0; i<nrOfItems; i++)
+                for (int i = 0; i < nrOfItems; i++)
                 {
                     var item = new Item
                     {
@@ -69,6 +69,6 @@ namespace MachineManagement.Data.Data
             }
 
             return items;
-        }
+        } 
     }
 }

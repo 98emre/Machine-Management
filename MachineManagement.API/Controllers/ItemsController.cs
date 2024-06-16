@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MachineManagement.Data;
+using MachineManagement.Data.Data;
 using MachineManagement.Core.Entities;
 
 namespace MachineManagement.API.Controllers
 {
-    public class ItemsController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ItemsController : ControllerBase
     {
         private readonly MachineManagementAPIContext _context;
 
@@ -19,141 +21,83 @@ namespace MachineManagement.API.Controllers
             _context = context;
         }
 
-        // GET: Items
-        public async Task<IActionResult> Index()
+        // GET: api/Items
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Item>>> GetItem()
         {
-            var machineManagementAPIContext = _context.Item.Include(i => i.Device);
-            return View(await machineManagementAPIContext.ToListAsync());
+            return await _context.Item.ToListAsync();
         }
 
-        // GET: Items/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/Items/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Item>> GetItem(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.Item
-                .Include(i => i.Device)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            return View(item);
-        }
-
-        // GET: Items/Create
-        public IActionResult Create()
-        {
-            ViewData["DeviceId"] = new SelectList(_context.Device, "Id", "Name");
-            return View();
-        }
-
-        // POST: Items/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,DeviceId")] Item item)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(item);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["DeviceId"] = new SelectList(_context.Device, "Id", "Name", item.DeviceId);
-            return View(item);
-        }
-
-        // GET: Items/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var item = await _context.Item.FindAsync(id);
+
             if (item == null)
             {
                 return NotFound();
             }
-            ViewData["DeviceId"] = new SelectList(_context.Device, "Id", "Name", item.DeviceId);
-            return View(item);
+
+            return item;
         }
 
-        // POST: Items/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,DeviceId")] Item item)
+        // PUT: api/Items/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutItem(int id, Item item)
         {
             if (id != item.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            if (ModelState.IsValid)
+            _context.Entry(item).State = EntityState.Modified;
+
+            try
             {
-                try
-                {
-                    _context.Update(item);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ItemExists(item.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
             }
-            ViewData["DeviceId"] = new SelectList(_context.Device, "Id", "Name", item.DeviceId);
-            return View(item);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ItemExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // GET: Items/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // POST: api/Items
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Item>> PostItem(Item item)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            _context.Item.Add(item);
+            await _context.SaveChangesAsync();
 
-            var item = await _context.Item
-                .Include(i => i.Device)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            return CreatedAtAction("GetItem", new { id = item.Id }, item);
+        }
+
+        // DELETE: api/Items/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteItem(int id)
+        {
+            var item = await _context.Item.FindAsync(id);
             if (item == null)
             {
                 return NotFound();
             }
 
-            return View(item);
-        }
-
-        // POST: Items/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var item = await _context.Item.FindAsync(id);
-            if (item != null)
-            {
-                _context.Item.Remove(item);
-            }
-
+            _context.Item.Remove(item);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NoContent();
         }
 
         private bool ItemExists(int id)

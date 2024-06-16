@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MachineManagement.Core.Entities;
 
-namespace MachineManagement.Data
+namespace MachineManagement.Data.Data
 {
     public class MachineManagementAPIContext : DbContext
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using MachineManagement.API.Data;
+using MachineManagement.Data.Data;
 
 namespace MachineManagement.API
 {
@@ -13,12 +13,8 @@ namespace MachineManagement.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("MachineManagementAPIContext") ?? throw new InvalidOperationException("Connection string 'MachineManagementAPIContext' not found.")));
 
             // Add services to the container.
-            builder.Services.AddAuthorization();
 
-            builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
-                .AddNewtonsoftJson()
-                .AddXmlDataContractSerializerFormatters();
-
+            builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -35,6 +31,7 @@ namespace MachineManagement.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
 
             app.MapControllers();
 
