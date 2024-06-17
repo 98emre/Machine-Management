@@ -1,0 +1,26 @@
+﻿
+@inject NavigationManager NavigationManager
+@inject IDeviceService DeviceService
+@rendermode InteractiveServer
+
+
+<div class="statistics-panel">
+    <h3>Machine Statistics</h3>
+    <p><strong>Number of machines: </strong> @totalDevices</p>
+    <p><strong>Number of active machines: </strong> @activeDevices</p>
+    <p><strong>Number of inactive machines: </strong> @inactiveDevices</p>
+</div>
+
+@code {
+    private int totalDevices;
+    private int activeDevices;
+    private int inactiveDevices;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var devices = await DeviceService.GetDevicesAsync();
+        totalDevices = devices.Count();
+        activeDevices = devices.Count(d => d.Status);
+        inactiveDevices = devices.Count(d => !d.Status);
+    }
+}
