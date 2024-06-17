@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MachineManagement.Data\MachineManagement.Data.csproj" />
+    <ProjectReference Include="..\MachineManagement.API\MachineManagement.API.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,9 +2,8 @@
 @page "/editDevice/{id:int}"
 
 @inject NavigationManager NavigationManager
-@inject DeviceClient Client
+@inject IDeviceService DeviceService
 @rendermode InteractiveServer
-
 
 <PageTitle>Edit Device</PageTitle>
 
@@ -14,36 +13,33 @@
 {
     <p><em>Loading...</em></p>
 }
-
 else if (deviceNotFound)
 {
-    <p><em>Not found</em></p>
+    <p><em>Device not found</em></p>
 }
-
 else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm Model="@device" FormName="editDevice" OnValidSubmit="HandleSubmit">
+            <EditForm Model="@Device" FormName="editDevice" OnValidSubmit="HandleSubmit">
 
                 <div class="mb-3">
                     <label for="name" class="form-label">Name: </label>
-                    <InputText id="name" @bind-Value="device.Name" class="form-control" />
+                    <InputText id="name" @bind-Value="Device.Name" class="form-control" />
                 </div>
 
                 <div class="mb-3">
-                    <label for="status" class="form-label">Genre: </label>
-                    <InputSelect id="status" @bind-Value="device.Status" class="form-select">
+                    <label for="status" class="form-label">Status: </label>
+                    <InputSelect id="status" @bind-Value="Device.Status" class="form-select">
                         <option value="">Select a status</option>
                         <option value="true">True</option>
                         <option value="false">False</option>
-
                     </InputSelect>
                 </div>
 
                 <div class="mb-3">
                     <label for="date" class="form-label">Date: </label>
-                    <InputDate id="date" @bind-Value="device.Date" class="form-control" />
+                    <InputDate id="date" @bind-Value="Device.Date" class="form-control" />
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save</button>
@@ -51,7 +47,6 @@ else
             </EditForm>
         </div>
     </div>
-
 }
 
 @code {
@@ -59,25 +54,32 @@ else
     private bool loading = true;
 
     [SupplyParameterFromForm]
-    private Device? device { get; set; }
+    private Device? Device { get; set; }
+
+    private DevicePost? DevicePost { get; set; }
+
 
     [Parameter]
     public int? Id { get; set; }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        if(device is not null)
+        if (Device != null)
         {
             return;
         }
 
-        if(Id is not null)
+        if (Id != null)
         {
             try
             {
-                device = Client.GetDevice(Id.Value);
-            }
+                Device = await DeviceService.GetDeviceAsync(Id.Value);
 
+                if (Device == null)
+                {
+                    deviceNotFound = true;
+                }
+            }
             catch (ArgumentNullException)
             {
                 deviceNotFound = true;
@@ -86,32 +88,46 @@ else
 
         else
         {
-            device = new Device()
+            Device = new Device()
             {
-                Name = string.Empty,
-                Date = DateOnly.FromDateTime(DateTime.UtcNow),
+               Name = string.Empty,
+               Date = DateOnly.FromDateTime(DateTime.UtcNow),
             };
         }
 
         loading = false;
     }
 
-    private void HandleSubmit()
+    private async Task HandleSubmit()
     {
-        ArgumentNullException.ThrowIfNull(device);
+        ArgumentNullException.ThrowIfNull(Device);
 
-        if(Id is null)
+        try
         {
-            Client.AddDevice(device);
-        }
+            if (Id == null)
+            {
+                DevicePost = new DevicePost()
+                {
+                    Name = Device.Name,
+                    Date = Device.Date,
+                    Status = Device.Status
+                };
 
-        else
+                await DeviceService.AddDeviceAsync(DevicePost);
+                Console.WriteLine("Device added successfully.");
+            }
+            else
+            {
+                Device.Id = Id.Value;
+                await DeviceService.UpdateDeviceAsync(Device);
+                Console.WriteLine("Device updated successfully.");
+            }
+
+            NavigationManager.NavigateTo("/dashboard");
+        }
+        catch (Exception ex)
         {
-            device.Id = Id.Value;
-            Client.UpdateDevice(device);
+            Console.WriteLine($"Error occurred: {ex.Message}");
         }
-
-        NavigationManager.NavigateTo("/dashboard");
     }
-
 }

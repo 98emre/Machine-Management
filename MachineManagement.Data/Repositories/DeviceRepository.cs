@@ -19,7 +19,7 @@ namespace MachineManagement.Data.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public void Add(Device device) => _context.Add(device);
+        public void Add(Device device) => _context.Device.Add(device);
 
         public async Task<bool> AnyAsync(int id) => await _context.Device.AnyAsync(d => d.Id == id);
 

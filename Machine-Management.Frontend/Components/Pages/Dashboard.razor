@@ -1,5 +1,5 @@
 ﻿@page "/dashboard"
-@inject DeviceClient Client
+@inject IDeviceService DeviceService
 @rendermode InteractiveServer
 
 <PageTitle>Dashboard</PageTitle>
@@ -7,14 +7,14 @@
 <h3>Dashboard</h3>
 
 <div class="mt-2">
-    <NavLink class="btn btn-primary" href="/editDevice">New Device</NavLink>
+    <NavLink class="btn btn-primary" href="/editdevice">New Device</NavLink>
 </div>
 
-@if (devices is null)
+@if (devices == null)
 {
     <p><em>Loading...</em></p>
 }
-else
+else if (devices.Any())
 {
     <div class="container mt-3">
         <div class="row">
@@ -57,7 +57,7 @@ else
 
                                         <button class="btn btn-danger"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="@GetDeleteModalId(device)">
+                                                data-bs-target="@($"#deleteModal-{device.Id}")">
                                             <i class="bi bi-x-lg"></i>
                                         </button>
                                         <DeleteDevice Device="@device" />
@@ -71,22 +71,20 @@ else
         </div>
     </div>
 }
+else
+{
+    <p>No devices found.</p>
+}
 
 @code {
-    private Device[]? devices;
+    private List<Device> devices;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        devices = Client.Devices();
+        devices = (await DeviceService.GetDevicesAsync()).ToList();
     }
 
-    private static string EditDeviceUrl(int id) => $"/editdevice/{id}";
+    private string EditDeviceUrl(int id) => $"/editdevice/{id}";
 
-    private static string DetailsDeviceUrl(int id) => $"/details/{id}";
-
-
-    private string GetDeleteModalId(Device device)
-    {
-        return $"#{DeleteDevice.GetModalId(device)}";
-    }
+    private string DetailsDeviceUrl(int id) => $"/details/{id}";
 }

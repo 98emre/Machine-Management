@@ -1,21 +1,21 @@
 ﻿@page "/details/{id:int}"
 
 @inject NavigationManager NavigationManager
-@inject DeviceClient Client
+@inject IDeviceService DeviceService
 @rendermode InteractiveServer
 
 <PageTitle>Details</PageTitle>
 
 
-@if (loading)
+@if (device == null)
 {
-    <p><em>Loading...</em></p>
+    <p class="mt-5"><em>Device not available</em></p>
+    <a href="/dashboard" role="button" class="btn btn-secondary mt-3">Return back</a>
 }
-
 
 else
 {
-    <h3 class="mt-3">@title Details</h3>
+    <h3 class="mt-3">Details</h3>
 
     <div class="row">
         <div class="col-md-4">
@@ -31,16 +31,16 @@ else
                 <label for="date" class="form-label"><strong>Date: </strong> @device.Date.ToShortDateString() </label>
             </div>
 
-           <div class="d-flex">
-                <a href="@AddItemUrl(device.Id)" role="button" class="btn btn-primary me-2">Add Item </a>
+            <div class="d-flex">
+                <a href="@AddItemUrl(device.Id)" role="button" class="btn btn-primary me-2">Add Item</a>
                 <a href="/dashboard" role="button" class="btn btn-secondary">Return back</a>
-           </div>
+            </div>
         </div>
     </div>
 
     <h3 class="mt-3">Items</h3>
     <div class="row">
-        @if (device.Items.Count == 0)
+        @if (device.Items == null || !device.Items.Any())
         {
             <p>Empty List</p>
         }
@@ -64,19 +64,10 @@ else
                             <td>@item.Price</td>
                             <th>
                                 <div class="d-flex">
-
-                                    <a class="btn btn-primary me-2" role="button" href="@EditItemUrl(device.Id,item.Id)">
+                                    <a class="btn btn-primary me-2" role="button" href="@EditItemUrl(device.Id, item.Id)">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-
-                                    <button class="btn btn-danger"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="@GetDeleteModalId(item)">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
-                                    <DeleteItem Device="@device" Item="@item"  />
                                 </div>
-
                             </th>
                         </tr>
                     }
@@ -84,12 +75,10 @@ else
             </table>
         }
     </div>
-    
 }
 
+
 @code {
-    private bool loading = false;
-    private string title = string.Empty;
 
     [Parameter]
     public int? Id { get; set; }
@@ -100,28 +89,31 @@ else
     private static string EditItemUrl(int id, int itemId) => $"/details/{id}/editItem/{itemId}";
 
 
-    private string GetDeleteModalId(Item item)
-    {
-        return $"#{DeleteItem.GetModalId(item)}";
-    }
+    // private string GetDeleteModalId(Item item)
+    // {
+    //     return $"#{DeleteItem.GetModalId(item)}";
+    // }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        if(device is not null)
+        if (Id != null)
         {
-            return;
-        }
-
-        if(Id is not null)
-        {
-            device = Client.GetDevice(Id.Value);
-            title = $"{device.Name}";
+            try
+            {
+                device = await DeviceService.GetDeviceAsync(Id.Value);
+            }
+        
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching device details: {ex.Message}");
+                device = null;
+            }
         }
 
         else
         {
-            NavigationManager.NavigateTo("/dashboard",true);
-
+            device = null;
+            NavigationManager.NavigateTo("/dashboard", true);
         }
     }
 
