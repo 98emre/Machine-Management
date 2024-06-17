@@ -60,7 +60,6 @@ namespace MachineManagement.API.Controllers
             return Ok(_mapper.Map<ItemDto>(item));
         }
 
-
         [HttpPut("{id}")]
         public async Task<IActionResult> PutItem(int id, ItemPostDto itemPostDto)
         {
@@ -161,6 +160,5 @@ namespace MachineManagement.API.Controllers
         private Task<bool> ItemExists(int id) => _unitOfWork.ItemRepository.AnyAsync(id);
 
         private async Task<bool> DeviceExists(int id) => await _unitOfWork.DeviceRepository.AnyAsync(id);
-
     }
 }
