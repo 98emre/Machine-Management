@@ -30,7 +30,7 @@ namespace MachineManagement.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetItem()
+        public async Task<IActionResult> GetItems()
         {
             var items = await _unitOfWork.ItemRepository.GetAllAsync();
 
@@ -58,6 +58,24 @@ namespace MachineManagement.API.Controllers
             }
 
             return Ok(_mapper.Map<ItemDto>(item));
+        }
+
+        [HttpGet("device/{id}")]
+        public async Task<IActionResult> GetDeviceItems(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var items = await _unitOfWork.ItemRepository.GetDeviceItemsAsync(id);
+
+            if (!items.Any() || items == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<IEnumerable<ItemDto>>(items));
         }
 
         [HttpPut("{id}")]
