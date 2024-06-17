@@ -14,10 +14,10 @@ namespace MachineManagement.Core.Dtos.Device
         [StringLength(50, MinimumLength = 5, ErrorMessage = "Name must be between 5 and 50")]
         public string Name { get; set; } = default!;
 
-        [Required]
+        [Required(ErrorMessage = "Choose status")]
         public bool Status { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Add Date")]
         public DateOnly Date { get; set; }
     }
 }
