@@ -25,8 +25,15 @@ namespace MachineManagement.Data.Repositories
 
         public async Task<IEnumerable<Item>> GetAllAsync() => await _context.Item.ToListAsync();
 
-        public async Task<Item> GetAsync(int id) => await _context.Item.FirstOrDefaultAsync(i => i.Id == id); 
-      
+        public async Task<Item> GetAsync(int id) => await _context.Item.FirstOrDefaultAsync(i => i.Id == id);
+
+        public async Task<IEnumerable<Item>> GetDeviceItemsAsync(int deviceId)
+        {
+            return await _context.Item
+                .Where(i => i.DeviceId == deviceId)
+                .ToListAsync();
+        }
+
         public void Remove(Item item) => _context.Item.Remove(item);
 
         public void Update(Item item) => _context.Item.Update(item);
