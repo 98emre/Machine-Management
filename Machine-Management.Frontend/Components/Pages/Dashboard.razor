@@ -1,5 +1,5 @@
 ﻿@page "/dashboard"
-@inject IDeviceService DeviceService
+@inject IUnitOfWork Services 
 @rendermode InteractiveServer
 
 <PageTitle>Dashboard</PageTitle>
@@ -81,7 +81,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        devices = (await DeviceService.GetDevicesAsync()).ToList();
+        devices = (await Services.DeviceService.GetDevicesAsync()).ToList();
     }
 
     private string EditDeviceUrl(int id) => $"/editdevice/{id}";

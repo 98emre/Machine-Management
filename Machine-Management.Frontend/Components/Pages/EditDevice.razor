@@ -2,7 +2,7 @@
 @page "/editDevice/{id:int}"
 
 @inject NavigationManager NavigationManager
-@inject IDeviceService DeviceService
+@inject IUnitOfWork Services
 @rendermode InteractiveServer
 
 <PageTitle>Edit Device</PageTitle>
@@ -77,7 +77,7 @@ else
         {
             try
             {
-                Device = await DeviceService.GetDeviceAsync(Id.Value);
+                Device = await Services.DeviceService.GetDeviceAsync(Id.Value);
 
                 if (Device == null)
                 {
@@ -117,13 +117,13 @@ else
                     Status = Device.Status
                 };
 
-                await DeviceService.AddDeviceAsync(DevicePost);
+                await Services.DeviceService.AddDeviceAsync(DevicePost);
                 Console.WriteLine("Device added successfully.");
             }
             else
             {
                 Device.Id = Id.Value;
-                await DeviceService.UpdateDeviceAsync(Device);
+                await Services.DeviceService.UpdateDeviceAsync(Device);
                 Console.WriteLine("Device updated successfully.");
             }
 

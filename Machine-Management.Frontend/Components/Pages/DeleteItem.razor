@@ -1,4 +1,4 @@
-﻿@inject IItemService ItemService
+﻿@inject IUnitOfWork Services
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
@@ -46,7 +46,7 @@
 
     private async Task DeleteConfirm()
     {
-        await ItemService.DeleteItemAsync(Item.Id);
+        await Services.ItemService.DeleteItemAsync(Item.Id);
         NavigationManager.NavigateTo($"/details/{Device.Id}", true);
     }
 }

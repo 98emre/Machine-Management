@@ -1,4 +1,4 @@
-﻿@inject IDeviceService DeviceService
+﻿@inject IUnitOfWork Services
 @inject NavigationManager NavigationManager
 
 @if (Device != null)
@@ -44,7 +44,7 @@
 
     private async Task DeleteConfirm()
     {
-        await DeviceService.DeleteDeviceAsync(Device.Id);
+        await Services.DeviceService.DeleteDeviceAsync(Device.Id);
         NavigationManager.NavigateTo("/dashboard", true);
     }
 }

@@ -2,7 +2,7 @@
 @page "/details/{Id:int}/editItem/{ItemId:int}"
 
 @inject NavigationManager NavigationManager
-@inject IItemService ItemService
+@inject IUnitOfWork Services
 
 @rendermode InteractiveServer
 
@@ -73,7 +73,7 @@ else
         {
             try
             {
-                item = await ItemService.GetItemAsync(ItemId.Value);
+                item = await Services.ItemService.GetItemAsync(ItemId.Value);
             }
 
             catch (ArgumentNullException)
@@ -106,13 +106,13 @@ else
                 Price = item.Price
             };
 
-            await ItemService.AddItemAsync(itemPost);
+            await Services.ItemService.AddItemAsync(itemPost);
         }
 
         else
         {
             item.Id = ItemId.Value;
-            await ItemService.UpdateItemAsync(item);
+            await Services.ItemService.UpdateItemAsync(item);
         }
 
         NavigationManager.NavigateTo($"/details/{Id}");

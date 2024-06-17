@@ -1,8 +1,7 @@
 ﻿@page "/details/{id:int}"
 
 @inject NavigationManager NavigationManager
-@inject IDeviceService DeviceService
-@inject IItemService ItemService;
+@inject IUnitOfWork Services
 @rendermode InteractiveServer
 
 <PageTitle>Details</PageTitle>
@@ -97,7 +96,7 @@ else
     {
         try
         {
-            device = await DeviceService.GetDeviceAsync(Id);
+            device = await Services.DeviceService.GetDeviceAsync(Id);
 
             if (device == null)
             {
@@ -107,7 +106,7 @@ else
 
             if(device != null)
             {
-                var items = await ItemService.GetDeviceItemsAsync(Id);
+                var items = await Services.ItemService.GetDeviceItemsAsync(Id);
 
                 device.Items = items?.ToList() ?? new List<Item>();
             }   

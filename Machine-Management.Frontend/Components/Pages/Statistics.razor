@@ -1,6 +1,6 @@
 ﻿
 @inject NavigationManager NavigationManager
-@inject IDeviceService DeviceService
+@inject IUnitOfWork Services
 @rendermode InteractiveServer
 
 
@@ -18,7 +18,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var devices = await DeviceService.GetDevicesAsync();
+        var devices = await Services.DeviceService.GetDevicesAsync();
         totalDevices = devices.Count();
         activeDevices = devices.Count(d => d.Status);
         inactiveDevices = devices.Count(d => !d.Status);
