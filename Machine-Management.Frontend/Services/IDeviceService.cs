@@ -6,7 +6,7 @@ namespace MachineManagement.Frontend.Services
     {
         Task<IEnumerable<Device>> GetDevicesAsync();
         Task<Device> GetDeviceAsync(int id);
-        Task AddDeviceAsync(Device device);
+        Task AddDeviceAsync(DevicePost devicePost);
         Task UpdateDeviceAsync(Device device);
         Task DeleteDeviceAsync(int id);
     }
