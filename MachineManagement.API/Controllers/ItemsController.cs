@@ -7,60 +7,90 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MachineManagement.Data.Data;
 using MachineManagement.Core.Entities;
+using MachineManagement.Data.Repositories;
+using AutoMapper;
+using MachineManagement.Core.Repositories;
+using MachineManagement.Core.Dtos.ItemDtos;
 
 namespace MachineManagement.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/items")]
     [ApiController]
     public class ItemsController : ControllerBase
     {
         private readonly MachineManagementAPIContext _context;
 
-        public ItemsController(MachineManagementAPIContext context)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public ItemsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        // GET: api/Items
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItem()
+        public async Task<IActionResult> GetItem()
         {
-            return await _context.Item.ToListAsync();
+            var items = await _unitOfWork.ItemRepository.GetAllAsync();
+
+            if(!items.Any() || items == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<IEnumerable<ItemDto>>(items));
         }
 
-        // GET: api/Items/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Item>> GetItem(int id)
         {
-            var item = await _context.Item.FindAsync(id);
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var item = await _unitOfWork.ItemRepository.GetAsync(id);
 
             if (item == null)
             {
                 return NotFound();
             }
 
-            return item;
+            return Ok(_mapper.Map<ItemDto>(item));
         }
 
-        // PUT: api/Items/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutItem(int id, Item item)
+        public async Task<IActionResult> PutItem(int id, ItemPostDto itemPostDto)
         {
-            if (id != item.Id)
+            if (id <= 0)
             {
                 return BadRequest();
             }
 
-            _context.Entry(item).State = EntityState.Modified;
+            var item = _mapper.Map<Item>(itemPostDto);
+            item.Id = id;
+
+            if (!await ItemExists(item.Id))
+            {
+                return BadRequest($"Item with Id {item.Id} not found");
+            }
+
+            if (!await DeviceExists(item.DeviceId))
+            {
+                return BadRequest($"Device with Id {item.DeviceId} not found");
+            }
 
             try
             {
-                await _context.SaveChangesAsync();
+                _unitOfWork.ItemRepository.Update(item);
+                await _unitOfWork.CompleteAsync();
             }
+
             catch (DbUpdateConcurrencyException)
             {
-                if (!ItemExists(id))
+                if (! await ItemExists(id))
                 {
                     return NotFound();
                 }
@@ -73,36 +103,64 @@ namespace MachineManagement.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Items
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Item>> PostItem(Item item)
+        public async Task<ActionResult<ItemDto>> PostItem(ItemPostDto itemPostDto)
         {
-            _context.Item.Add(item);
-            await _context.SaveChangesAsync();
+            var item = _mapper.Map<Item>(itemPostDto);
 
-            return CreatedAtAction("GetItem", new { id = item.Id }, item);
+            if (!(await DeviceExists(item.DeviceId)))
+            {
+                return BadRequest($"Device with Id {item.DeviceId} not found");
+            }
+
+            try
+            {
+                _unitOfWork.ItemRepository.Add(item);
+                await _unitOfWork.CompleteAsync();
+            }
+
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occured while posting the game");
+            }
+
+            var returnItem = _mapper.Map<ItemDto>(item);
+
+            return CreatedAtAction("GetItem", new { id = returnItem.Id }, returnItem);
         }
 
-        // DELETE: api/Items/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItem(int id)
         {
-            var item = await _context.Item.FindAsync(id);
+            if(id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var item = await _unitOfWork.ItemRepository.GetAsync(id);
+            
             if (item == null)
             {
                 return NotFound();
             }
 
-            _context.Item.Remove(item);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _unitOfWork.ItemRepository.Remove(item);
+                await _unitOfWork.CompleteAsync();
+            }
+
+            catch(Exception)
+            {
+                return StatusCode(500, "An error occured whilte deleting the item");
+            }
 
             return NoContent();
         }
 
-        private bool ItemExists(int id)
-        {
-            return _context.Item.Any(e => e.Id == id);
-        }
+        private Task<bool> ItemExists(int id) => _unitOfWork.ItemRepository.AnyAsync(id);
+
+        private async Task<bool> DeviceExists(int id) => await _unitOfWork.DeviceRepository.AnyAsync(id);
+
     }
 }

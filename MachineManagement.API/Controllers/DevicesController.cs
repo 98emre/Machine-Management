@@ -98,7 +98,8 @@ namespace MachineManagement.API.Controllers
                 await _unitOfWork.CompleteAsync();
             }
 
-            catch(Exception){
+            catch(Exception)
+            {
                 return StatusCode(500, "An error occured while posting the device");
             }
 
