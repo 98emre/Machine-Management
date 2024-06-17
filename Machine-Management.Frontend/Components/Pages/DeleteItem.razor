@@ -1,4 +1,4 @@
-﻿@inject DeviceClient Client
+﻿@inject IItemService ItemService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
@@ -15,7 +15,7 @@
                 <button type="button"
                         class="btn btn-danger"
                         data-bs-dismiss="modal"
-                        @onclick="@Confirm">
+                        @onclick="@DeleteConfirm">
                     Delete
                 </button>
             </div>
@@ -44,9 +44,9 @@
         return $"deleteModal-{item.Id}";
     }
 
-    private void Confirm()
+    private async Task DeleteConfirm()
     {
-        Client.RemoveItem(Device!.Id, Item!.Id);
+        await ItemService.DeleteItemAsync(Item.Id);
         NavigationManager.NavigateTo($"/details/{Device.Id}", true);
     }
 }

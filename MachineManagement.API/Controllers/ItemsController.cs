@@ -72,7 +72,7 @@ namespace MachineManagement.API.Controllers
 
             if (!items.Any() || items == null)
             {
-                return NotFound();
+                items = new List<Item>();
             }
 
             return Ok(_mapper.Map<IEnumerable<ItemDto>>(items));

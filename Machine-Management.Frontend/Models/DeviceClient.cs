@@ -115,14 +115,14 @@ namespace MachineManagement.Frontend.Models
             item.Price = updateItem.Price;
         }
  
-        public Item GetItem(int deviceId, int id) 
-        {
-            var existingDevice = GetDevice(deviceId);
+        //public Item GetItem(int deviceId, int id) 
+        //{
+        //    var existingDevice = GetDevice(deviceId);
 
-            var existingItem = existingDevice.Items.Find(d => d.Id == id);
-            ArgumentNullException.ThrowIfNull(existingItem);
+        //    var existingItem = existingDevice.Items.Find(d => d.Id == id);
+        //    ArgumentNullException.ThrowIfNull(existingItem);
             
-            return existingItem;
-        }
+        //    return existingItem;
+        //}
     }
 }

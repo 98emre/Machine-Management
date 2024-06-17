@@ -16,7 +16,7 @@
                     <button type="button"
                             class="btn btn-danger"
                             data-bs-dismiss="modal"
-                            @onclick="@ConfirmDelete">
+                            @onclick="@DeleteConfirm">
                         Delete
                     </button>
                 </div>
@@ -26,6 +26,7 @@
 }
 
 @code {
+
     [Parameter]
     public Device Device { get; set; }
 
@@ -41,7 +42,7 @@
         return $"deleteModal-{device.Id}";
     }
 
-    private async Task ConfirmDelete()
+    private async Task DeleteConfirm()
     {
         await DeviceService.DeleteDeviceAsync(Device.Id);
         NavigationManager.NavigateTo("/dashboard", true);

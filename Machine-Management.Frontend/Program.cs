@@ -16,6 +16,22 @@ namespace Machine_Management.Frontend
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
+            builder.Services.AddHttpClient<IItemService, ItemService>(client =>
+            {
+                var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+                if (string.IsNullOrEmpty(apiBaseUrl))
+                {
+                    throw new InvalidOperationException("ApiBaseUrl configuration is missing.");
+                }
+                client.BaseAddress = new Uri(apiBaseUrl);
+            }).ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                return new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+            });
+
             builder.Services.AddHttpClient<IDeviceService, DeviceService>(client =>
             {
                 var apiBaseUrl = builder.Configuration["ApiBaseUrl"];

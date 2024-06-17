@@ -11,9 +11,11 @@ namespace MachineManagement.Frontend.Services
             _httpClient = httpClient;
         }
 
-        public async Task AddItemAsync(Item item) => await _httpClient.PostAsJsonAsync("api/items", item);
+        public async Task AddItemAsync(ItemPost itemPost) => await _httpClient.PostAsJsonAsync("api/items", itemPost);
 
         public async Task DeleteItemAsync(int id) => await _httpClient.DeleteAsync($"api/items/{id}");
+
+        public async Task<IEnumerable<Item>> GetDeviceItemsAsync(int deviceId) => await _httpClient.GetFromJsonAsync<IEnumerable<Item>>($"api/items/device/{deviceId}");
 
         public async Task<Item> GetItemAsync(int id) => await _httpClient.GetFromJsonAsync<Item>($"api/items/{id}");
 

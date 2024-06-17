@@ -6,12 +6,12 @@ namespace MachineManagement.Frontend.Models
     {
         public int Id { get; set; }
 
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
         public bool Status { get; set; }
 
-        public required DateOnly Date { get; set; }
+        public DateOnly Date { get; set; }
 
-        public List<Item> Items { get; set; } = new List<Item>();
+        public ICollection<Item> Items { get; set; } = new List<Item>();
     }
 }

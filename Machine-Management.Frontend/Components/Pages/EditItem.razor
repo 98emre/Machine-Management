@@ -2,12 +2,11 @@
 @page "/details/{Id:int}/editItem/{ItemId:int}"
 
 @inject NavigationManager NavigationManager
-@inject DeviceClient Client
+@inject IItemService ItemService
+
 @rendermode InteractiveServer
 
-
 <PageTitle>Add Item </PageTitle>
-
 
 @if (loading)
 {
@@ -57,10 +56,9 @@ else
     [Parameter]
     public int? ItemId { get; set; }
 
-
     private static string ReturnUrl(int id) => $"/details/{id}";
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (Id == 0)
         {
@@ -71,7 +69,7 @@ else
         {
             try
             {
-                item = Client.GetItem(Id, ItemId.Value);
+                item = await ItemService.GetItemAsync(ItemId.Value);
             }
 
             catch (ArgumentNullException)
@@ -85,24 +83,32 @@ else
             item = new Item
             {
                 Name = string.Empty,
-                Price = 0.0
+                Price = 0.0,
+                DeviceId = Id
             };
         }
 
         loading = false;
     }
 
-    private void HandleSubmit()
+    private async Task HandleSubmit()
     {
         if(ItemId is null)
         {
-            Client.AddItem(Id, item);
+            ItemPost itemPost = new ItemPost
+            {
+                Name = item.Name,
+                DeviceId = Id,
+                Price = item.Price
+            };
+
+            await ItemService.AddItemAsync(itemPost);
         }
 
         else
         {
             item.Id = ItemId.Value;
-            Client.UpdateItem(Id, item);
+            await ItemService.UpdateItemAsync(item);
         }
 
         NavigationManager.NavigateTo($"/details/{Id}");
